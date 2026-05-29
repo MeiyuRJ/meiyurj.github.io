@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meiyu Zheng — Data Engineer & Voice AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS ──────────────────────────────────────────────────── */
+    :root {
+      --ink:      #1a1714;
+      --paper:    #f5f0e8;
+      --clay:     #b8613a;
+      --clay-lt:  #d4896a;
+      --mist:     #e8e2d6;
+      --stone:    #7a7269;
+      --rule:     #cfc8bc;
+    }
+
+    /* ── RESET ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── GRAIN OVERLAY ───────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── SELECTION ───────────────────────────────────────────────── */
+    ::selection { background: var(--clay); color: var(--paper); }
+
+    /* ── SCROLLBAR ───────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--mist); }
+    ::-webkit-scrollbar-thumb { background: var(--clay); }
+
+    /* ── LAYOUT WRAPPERS ─────────────────────────────────────────── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 24px; }
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      mix-blend-mode: multiply;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 48px;
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--stone);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-logo:hover { color: var(--clay); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--stone);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--clay); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: 100px;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: var(--clay);
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(64px, 10vw, 140px);
+      font-weight: 900;
+      line-height: .92;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 0;
+    }
+
+    .hero-name-italic {
+      font-style: italic;
+      color: var(--clay);
+    }
+
+    .hero-tagline-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 48px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .hero-tagline {
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--stone);
+      max-width: 440px;
+      line-height: 1.7;
+    }
+
+    .hero-meta {
+      text-align: right;
+    }
+
+    .hero-location {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .12em;
+      color: var(--stone);
+      text-transform: uppercase;
+    }
+
+    .hero-availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .hero-availability::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--clay);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.8); }
+    }
+
+    .hero-divider {
+      height: 1px;
+      background: var(--rule);
+      margin-top: 72px;
+    }
+
+    /* ── SECTION WRAPPER ─────────────────────────────────────────── */
+    .section {
+      padding: 100px 0;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--rule);
+    }
+
+    .section-label {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .section-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--mist);
+      letter-spacing: -.02em;
+      user-select: none;
+    }
+
+    .section-head {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--stone);
+      padding-top: 12px;
+    }
+
+    /* ── ABOUT ───────────────────────────────────────────────────── */
+    .about-body {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .about-body { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    .about-pull {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+
+    .about-pull em {
+      color: var(--clay);
+      font-style: italic;
+    }
+
+    .about-text {
+      font-size: 15px;
+      color: var(--stone);
+      line-height: 1.8;
+    }
+
+    .about-text p + p { margin-top: 16px; }
+
+    /* Languages strip */
+    .lang-strip {
+      margin-top: 64px;
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .lang-item {
+      flex: 1;
+      padding: 20px 24px;
+      border-right: 1px solid var(--rule);
+    }
+    .lang-item:last-child { border-right: none; }
+
+    .lang-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .lang-level {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .lang-strip { flex-wrap: wrap; }
+      .lang-item { flex: 0 0 50%; border-bottom: 1px solid var(--rule); }
+    }
+
+    /* ── EXPERIENCE ──────────────────────────────────────────────── */
+    .exp-list {
+      margin-top: 64px;
+    }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      padding: 48px 0;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+    }
+
+    .exp-item:first-child {
+      border-top: 1px solid var(--rule);
+    }
+
+    @media (max-width: 768px) {
+      .exp-item { grid-template-columns: 1fr; gap: 16px; }
+    }
+
+    .exp-meta {
+      padding-top: 4px;
+    }
+
+    .exp-company {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--clay);
+      font-weight: 500;
+    }
+
+    .exp-period {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--stone);
+      margin-top: 6px;
+      letter-spacing: .08em;
+    }
+
+    .exp-location {
+      font-size: 11px;
+      color: var(--stone);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .exp-role {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .exp-desc {
+      font-size: 14px;
+      color: var(--stone);
+      line-height: 1.8;
+    }
+
+    .exp-bullets {
+      margin-top: 20px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .exp-bullets li {
+      font-size: 14px;
+      color: var(--stone);
+      line-height: 1.7;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .exp-bullets li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--clay);
+      font-weight: 300;
+    }
+
+    .exp-highlight {
+      display: inline;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ── IMPACT NUMBERS ──────────────────────────────────────────── */
+    .impact-band {
+      background: var(--ink);
+      padding: 80px 0;
+      margin: 0 -48px;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    @media (max-width: 768px) {
+      .impact-band { margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .impact-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .impact-cell {
+      padding: 40px 32px;
+      border-right: 1px solid #2e2a26;
+    }
+    .impact-cell:last-child { border-right: none; }
+
+    .impact-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 4vw, 60px);
+      font-weight: 900;
+      color: var(--paper);
+      line-height: 1;
+    }
+
+    .impact-num span {
+      color: var(--clay);
+    }
+
+    .impact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    /* ── SKILLS ──────────────────────────────────────────────────── */
+    .skills-grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+
+    @media (max-width: 768px) {
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+
+    .skill-cell {
+      background: var(--paper);
+      padding: 36px 32px;
+      transition: background .2s;
+    }
+    .skill-cell:hover { background: var(--mist); }
+
+    .skill-cat {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 16px;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tag {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink);
+      padding: 4px 10px;
+      border: 1px solid var(--rule);
+      transition: border-color .2s, color .2s;
+    }
+    .skill-tag:hover { border-color: var(--clay); color: var(--clay); }
+
+    /* ── EDUCATION ───────────────────────────────────────────────── */
+    .edu-list {
+      margin-top: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .edu-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .edu-item:first-child { border-top: 1px solid var(--rule); }
+
+    @media (max-width: 768px) {
+      .edu-item { grid-template-columns: 1fr; gap: 12px; }
+    }
+
+    .edu-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--stone);
+      letter-spacing: .08em;
+      padding-top: 4px;
+    }
+
+    .edu-school {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .edu-degree {
+      font-size: 14px;
+      color: var(--stone);
+      margin-top: 6px;
+    }
+
+    .edu-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--clay);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    /* ── SPEAKING ────────────────────────────────────────────────── */
+    .speaking-list {
+      margin-top: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .speaking-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 32px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .speaking-item:first-child { border-top: 1px solid var(--rule); }
+
+    .speaking-event {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-style: italic;
+    }
+
+    .speaking-role {
+      font-size: 13px;
+      color: var(--stone);
+      margin-top: 4px;
+    }
+
+    .speaking-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      color: var(--stone);
+      white-space: nowrap;
+    }
+
+    /* ── CONTACT ─────────────────────────────────────────────────── */
+    .contact-inner {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    .contact-cta {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .contact-cta em {
+      font-style: italic;
+      color: var(--clay);
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 15px;
+      padding: 20px 24px;
+      border: 1px solid var(--rule);
+      transition: border-color .2s, background .2s;
+    }
+    .contact-link:hover {
+      border-color: var(--clay);
+      background: var(--mist);
+    }
+
+    .contact-link-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--clay);
+      flex-shrink: 0;
+    }
+
+    .contact-link-info {}
+    .contact-link-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+    .contact-link-value {
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 3px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 40px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--stone);
+      letter-spacing: .1em;
+    }
+
+    .footer-pronouns {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--stone);
+      letter-spacing: .1em;
+    }
+
+    /* ── ENTRANCE ANIMATIONS ─────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered children */
+    .stagger > * {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .stagger.visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0s; }
+    .stagger.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: .1s; }
+    .stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: .2s; }
+    .stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: .3s; }
+    .stagger.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: .4s; }
+    .stagger.visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: .5s; }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">MZ</a>
+      <ul class="nav-links">
+        <li><a href="#work">Work</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Data Engineer & Voice AI</div>
+
+      <h1 class="hero-name">
+        Meiyu<br>
+        <span class="hero-name-italic">Zheng</span>
+      </h1>
+
+      <div class="hero-tagline-row">
+        <p class="hero-tagline fade-in">
+          Building the data infrastructure that teaches machines to speak—pipelines, metrics, and the craft of making voice AI human.
+        </p>
+        <div class="hero-meta fade-in">
+          <div class="hero-location">Vancouver, Canada</div>
+          <div class="hero-availability">Open to opportunities</div>
+        </div>
+      </div>
+
+      <div class="hero-divider"></div>
+    </div>
+  </section>
+
+  <!-- IMPACT NUMBERS (between hero and about) -->
+  <div class="container">
+    <div class="impact-band">
+      <div class="impact-grid stagger">
+        <div class="impact-cell">
+          <div class="impact-num">10k<span>+</span></div>
+          <div class="impact-label">Hours of audio<br>pipeline data</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">30<span>%</span></div>
+          <div class="impact-label">Reduction in<br>ingestion latency</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">500k<span>+</span></div>
+          <div class="impact-label">Active users on<br>launched Duolingo course</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">6</div>
+          <div class="impact-label">Languages<br>spoken</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">01</div>
+        <div class="section-head">About</div>
+      </div>
+      <div class="about-body">
+        <div class="about-pull fade-in">
+          Where <em>language</em> meets data—turning raw audio into the intelligence that powers the next generation of voice AI.
+        </div>
+        <div class="about-text fade-in">
+          <p>I'm a Data Engineer and DataOps specialist currently at Meta in Vancouver, where I lead speech data pipeline architecture for large-scale voice AI development.</p>
+          <p>My path here is anything but linear: I started in linguistics and language education, moved through UX at Duolingo, into NLP engineering, and arrived at the intersection of data infrastructure and Voice AI. That layered background means I think about speech data with both technical rigor and deep linguistic intuition.</p>
+          <p>I hold an M.Sc. in Data Science (NLP track) from UBC, and I bring fluency in six languages—which turns out to be genuinely useful when your job is to make AI understand human speech.</p>
+        </div>
+      </div>
+
+      <!-- Languages -->
+      <div class="lang-strip stagger">
+        <div class="lang-item">
+          <div class="lang-name">English</div>
+          <div class="lang-level">Fluent</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Chinese</div>
+          <div class="lang-level">Native</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Korean</div>
+          <div class="lang-level">Native</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Portuguese</div>
+          <div class="lang-level">Advanced</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Spanish</div>
+          <div class="lang-level">Conversational</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Japanese</div>
+          <div class="lang-level">Conversational</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section" id="work">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">02</div>
+        <div class="section-head">Experience</div>
+      </div>
+
+      <div class="exp-list">
+
+        <!-- Meta -->
+        <div class="exp-item fade-in">
+          <div class="exp-meta">
+            <div class="exp-company">Meta</div>
+            <div class="exp-period">07/2023 — Present</div>
+            <div class="exp-location">Vancouver, Canada</div>
+          </div>
+          <div class="exp-content">
+            <h3 class="exp-role">Data Engineer<br>& DataOps</h3>
+            <ul class="exp-bullets">
+              <li>Led a team to architect and deploy an <span class="exp-highlight">end-to-end speech data pipeline</span> that processed 10,000+ hours of audio data, reducing ingestion latency by 30% and enabling scaled human annotation for model development.</li>
+              <li>Partnered with research scientists to design evaluation strategies for new voice quality metrics (MOS, cMOS, Turing Test) in a holistic benchmarking framework—driving weekly post-launch data flywheel monitoring.</li>
+              <li>Architected an <span class="exp-highlight">interactive analytics dashboard tracking 12+ real-time KPIs</span> for voice quality, adopted by 5+ cross-functional teams to drive end-to-end product launch decisions.</li>
+              <li>Built scalable ingestion and preprocessing pipelines integrated with Meta's internal annotation platforms, improving annotation throughput and labeling consistency.</li>
+              <li>Performed advanced statistical analysis on annotator performance and inter-rater reliability, aggregating results and removing outliers to ensure reliable outcomes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Seasalt.ai -->
+        <div class="exp-item fade-in">
+          <div class="exp-meta">
+            <div class="exp-company">Seasalt.ai</div>
+            <div class="exp-period">05/2023 — 07/2023</div>
+            <div class="exp-location">Seattle, US (Remote)</div>
+          </div>
+          <div class="exp-content">
+            <h3 class="exp-role">NLP Engineer<br>Intern</h3>
+            <ul class="exp-bullets">
+              <li>Increased AI chatbot robustness by an estimated <span class="exp-highlight">15%</span> by optimizing Text Normalization (TN/ITN) modules via ChatGPT API, significantly improving data preparation accuracy for model training.</li>
+              <li>Crafted alignment scripts tailored for Traditional Chinese to prepare data for model training.</li>
+              <li>Applied linguistic insights to develop a custom evaluation set including edge cases, and conducted thorough error analysis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Duolingo -->
+        <div class="exp-item fade-in">
+          <div class="exp-meta">
+            <div class="exp-company">Duolingo</div>
+            <div class="exp-period">03/2018 — 06/2022</div>
+            <div class="exp-location">Pittsburgh, US (Remote)</div>
+          </div>
+          <div class="exp-content">
+            <h3 class="exp-role">Learning<br>Designer</h3>
+            <ul class="exp-bullets">
+              <li>Engineered front-end fixes for TTS modules and launched a <span class="exp-highlight">Korean-for-Mandarin course</span> that reached Top 3 popularity, serving 500,000+ active users.</li>
+              <li>Facilitated engineering team in optimizing Korean language structural recognition algorithms and improving accuracy of part-of-speech tagging in ML systems.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section" id="skills">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">03</div>
+        <div class="section-head">Skills & Tools</div>
+      </div>
+
+      <div class="skills-grid stagger">
+        <div class="skill-cell">
+          <div class="skill-cat">Data Engineering</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">Spark</span>
+            <span class="skill-tag">Airflow</span>
+            <span class="skill-tag">Presto / Hive</span>
+            <span class="skill-tag">Snowflake</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cat">Databases</div>
+          <div class="skill-tags">
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">MongoDB</span>
+            <span class="skill-tag">Pandas</span>
+            <span class="skill-tag">NumPy</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cat">Speech & ML</div>
+          <div class="skill-tags">
+            <span class="skill-tag">PyTorch</span>
+            <span class="skill-tag">TorchAudio</span>
+            <span class="skill-tag">Whisper ASR</span>
+            <span class="skill-tag">Wav2Vec 2.0</span>
+            <span class="skill-tag">NVIDIA NeMo</span>
+            <span class="skill-tag">ElevenLabs</span>
+            <span class="skill-tag">ffmpeg</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cat">Cloud & Infra</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Google Cloud</span>
+            <span class="skill-tag">Hugging Face</span>
+            <span class="skill-tag">Tableau</span>
+            <span class="skill-tag">Matplotlib</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cat">Voice AI Metrics</div>
+          <div class="skill-tags">
+            <span class="skill-tag">MOS</span>
+            <span class="skill-tag">cMOS</span>
+            <span class="skill-tag">Turing Test</span>
+            <span class="skill-tag">DataOps</span>
+            <span class="skill-tag">Inter-rater Reliability</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-cat">NLP</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Text Normalization</span>
+            <span class="skill-tag">TN / ITN</span>
+            <span class="skill-tag">POS Tagging</span>
+            <span class="skill-tag">ChatGPT API</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section" id="education">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">04</div>
+        <div class="section-head">Education</div>
+      </div>
+
+      <div class="edu-list">
+        <div class="edu-item fade-in">
+          <div class="edu-year">2022 — 2023</div>
+          <div>
+            <div class="edu-school">University of British Columbia</div>
+            <div class="edu-degree">M.Sc. in Data Science — Natural Language Processing</div>
+            <div class="edu-note">Vancouver, Canada</div>
+          </div>
+        </div>
+        <div class="edu-item fade-in">
+          <div class="edu-year">2011 — 2015</div>
+          <div>
+            <div class="edu-school">Zhejiang University</div>
+            <div class="edu-degree">B.A. in English Language, Linguistics and Literature</div>
+            <div class="edu-note">Hangzhou, China</div>
+          </div>
+        </div>
+        <div class="edu-item fade-in">
+          <div class="edu-year">2015</div>
+          <div>
+            <div class="edu-school">University of York</div>
+            <div class="edu-degree">Department of Language and Linguistic Science — Visiting Student</div>
+            <div class="edu-note">York, UK</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPEAKING -->
+  <section class="section">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">05</div>
+        <div class="section-head">Speaking</div>
+      </div>
+
+      <div class="speaking-list">
+        <div class="speaking-item fade-in">
+          <div>
+            <div class="speaking-event">Women in Data Science Conference</div>
+            <div class="speaking-role">Keynote Speaker</div>
+          </div>
+          <div class="speaking-date">April 2024</div>
+        </div>
+        <div class="speaking-item fade-in">
+          <div>
+            <div class="speaking-event">University of British Columbia</div>
+            <div class="speaking-role">Seminar Speaker</div>
+          </div>
+          <div class="speaking-date">June 2024</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-label fade-in">
+        <div class="section-num">06</div>
+        <div class="section-head">Contact</div>
+      </div>
+
+      <div class="contact-inner">
+        <div class="contact-cta fade-in">
+          Let's build something <em>worth hearing.</em>
+        </div>
+
+        <div class="contact-links stagger">
+          <a href="mailto:meiyurj21@gmail.com" class="contact-link">
+            <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+            </svg>
+            <div class="contact-link-info">
+              <div class="contact-link-label">Email</div>
+              <div class="contact-link-value">meiyurj21@gmail.com</div>
+            </div>
+          </a>
+
+          <a href="https://linkedin.com/in/meiyuz" target="_blank" rel="noopener" class="contact-link">
+            <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+            <div class="contact-link-info">
+              <div class="contact-link-label">LinkedIn</div>
+              <div class="contact-link-value">linkedin.com/in/meiyuz</div>
+            </div>
+          </a>
+
+          <a href="https://github.com/MeiyuRJ" target="_blank" rel="noopener" class="contact-link">
+            <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+            </svg>
+            <div class="contact-link-info">
+              <div class="contact-link-label">GitHub</div>
+              <div class="contact-link-value">github.com/MeiyuRJ</div>
+            </div>
+          </a>
+
+          <a href="tel:+12369976716" class="contact-link">
+            <svg class="contact-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/>
+            </svg>
+            <div class="contact-link-info">
+              <div class="contact-link-label">Phone</div>
+              <div class="contact-link-value">+1 236 997 6716</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container" style="display:contents">
+      <div class="footer-copy">© 2025 Meiyu Zheng</div>
+      <div class="footer-pronouns">she / her</div>
+    </div>
+  </footer>
+
+  <!-- SCROLL ANIMATION SCRIPT -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+
+    document.querySelectorAll('.fade-in, .stagger').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Trigger elements already in view on load
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.fade-in, .stagger').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add('visible');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
